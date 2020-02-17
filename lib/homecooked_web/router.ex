@@ -7,5 +7,7 @@ defmodule HomecookedWeb.Router do
 
   scope "/api", HomecookedWeb do
     pipe_through :api
+
+    get "/hello", Mycontroller, :hello
   end
 end
