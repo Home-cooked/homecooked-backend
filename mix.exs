@@ -1,3 +1,7 @@
+# My Father’s house has many rooms; if that were not so, would I have told you that I am
+# going there to prepare a place for you? And if I go and prepare a place for you, I will
+# come back and take you to be with me that you also may be where I am.
+
 defmodule Homecooked.MixProject do
   use Mix.Project
 
