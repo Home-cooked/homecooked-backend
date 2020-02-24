@@ -30,8 +30,8 @@ jobs:
       - run: echo "$CIRCLE_SHA1"
       - run: ssh -o StrictHostKeyChecking=no admin@$EC2_DOMAIN_NAME "mkdir homecooked-$CIRCLE_SHA1"
       - run: scp -r * admin@$EC2_DOMAIN_NAME:~/homecooked-$CIRCLE_SHA1      
-      - run: ssh admin@$EC2_DOMAIN_NAME "cd homecooked-$CIRCLE_SHA1 && mix local.hex --force && mix local.rebar --force && mix deps.get && mix deps.compile && MIX_ENV=prod DATABASE_URL=$DATABASE_URL SECRET_KEY_BASE=$SECRET_KEY_BASE mix release && pkill elixir; sudo _build/prod/rel/homecooked/bin/homecooked daemon"
-
+      - run: ssh admin@$EC2_DOMAIN_NAME "cd homecooked-$CIRCLE_SHA1 && mix local.hex --force && mix local.rebar --force && mix deps.get && mix deps.compile && MIX_ENV=prod DATABASE_URL=$DATABASE_URL SECRET_KEY_BASE=$SECRET_KEY_BASE mix release;"
+        # sudo _build/prod/rel/homecooked/bin/homecooked eval 'Homecooked.Release.migrate' && _build/prod/rel/homecooked/bin/homecooked daemon; cd ../ && sudo rm -rf !('homecooked-$CIRCLE_SHA1') && cd homecooked-$CIRCLE_SHA1;
         # - run: MIX_ENV=prod DATABASE_URL=$DATABASE_URL SECRET_KEY_BASE=$SECRET_KEY_BASE mix release
       
         # 'pkill homecooked && chmod 664 ~/hc_build/prod/rel/homecooked/bin/homecooked && ~/hc_build/prod/rel/homecooked/bin/homecooked start'
