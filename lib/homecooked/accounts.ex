@@ -101,4 +101,17 @@ defmodule Homecooked.Accounts do
   def change_user(%User{} = user) do
     User.changeset(user, %{})
   end
+
+  def get_or_create_user(%{} = user) do
+    case user['id'] do
+      nil -> create_user(user)
+      _ -> Repo.get_by(User, id: user['id'])
+    end
+  end
+
+  def check_user_name(user_name) do
+    Repo.all(from u in "users", select: u.user_name)
+    |> MapSet.new()
+    |> MapSet.member?(user_name)
+  end
 end

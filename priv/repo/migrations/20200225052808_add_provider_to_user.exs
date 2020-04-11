@@ -3,8 +3,8 @@ defmodule Homecooked.Repo.Migrations.AddProviderToUser do
 
   def change do
     alter table(:users) do
-      add :email, :text
-      add :provider, :text
+      add :email, :string
+      add :oauth_id, :string
     end
   end
 end

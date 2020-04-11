@@ -6,19 +6,17 @@ defmodule HomecookedWeb.UserController do
 
   action_fallback HomecookedWeb.FallbackController
 
+  # Add load User for handlers
+  def action(conn, _params) do
+    apply(__MODULE__, action_name(conn), [conn, conn.params, Guardian.Plug.current_resource(conn)])
+  end
+
   def index(conn, _params) do
     users = Accounts.list_users()
     render(conn, "index.json", users: users)
   end
 
-  def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.user_path(conn, :show, user))
-      |> render("show.json", user: user)
-    end
-  end
+  # Creating Users handled in auth controller
 
   def show(conn, %{"id" => id}) do
     user = Accounts.get_user!(id)
@@ -39,5 +37,10 @@ defmodule HomecookedWeb.UserController do
     with {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  def check(conn, %{"user_name" => user_name}, _user) do
+    taken = Accounts.check_user_name(user_name)
+    json(conn, %{ taken: taken })
   end
 end

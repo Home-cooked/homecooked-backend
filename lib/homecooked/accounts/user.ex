@@ -9,7 +9,6 @@ defmodule Homecooked.Accounts.User do
     field :last_name, :string
     field :user_name, :string
     field :email, :string
-    field :provider, :string
 
     timestamps()
   end
@@ -17,9 +16,9 @@ defmodule Homecooked.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:user_name, :first_name, :last_name])
+    |> cast(attrs, [:user_name, :first_name, :last_name, :email])
     |> validate_required([:user_name, :first_name, :last_name])
-    |> unique_constraint(:username)
+    |> unique_constraint(:user_name)
 
   end
 end

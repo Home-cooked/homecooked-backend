@@ -14,17 +14,27 @@ defmodule Homecooked.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: releases()
     ]
   end
 
+  defp releases do
+    [
+      homecooked: [
+        include_executables_for: [:unix],
+        applications: [runtime_tools: :permanent]
+      ]
+    ]
+  end
+  
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
   def application do
     [
       mod: {Homecooked.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :ueberauth_github, :ueberauth_google]
     ]
   end
 
@@ -44,7 +54,11 @@ defmodule Homecooked.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:guardian, "~> 2.0"},
+      {:ueberauth, "~> 0.6"},
+      {:ueberauth_github, "~> 0.7"},
+      {:ueberauth_google, "~> 0.8"}
     ]
   end
 

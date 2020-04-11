@@ -7,6 +7,7 @@ config :homecooked, Homecooked.Repo,
   database: "homecooked_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
+  migration_primary_key: [name: :uuid, type: :binary_id],
   pool_size: 10
 
 # For development, we disable any cache and enable
@@ -17,6 +18,12 @@ config :homecooked, Homecooked.Repo,
 # with webpack to recompile .js and .css sources.
 config :homecooked, HomecookedWeb.Endpoint,
   http: [port: 4000],
+  https: [
+      port: 4001,
+      cipher_suite: :strong,
+      certfile: "priv/cert/selfsigned.pem",
+      keyfile: "priv/cert/selfsigned_key.pem"
+  ],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
