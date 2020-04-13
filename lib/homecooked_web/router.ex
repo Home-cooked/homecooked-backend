@@ -1,7 +1,7 @@
 defmodule HomecookedWeb.Router do
   use HomecookedWeb, :router
   require Ueberauth
-  
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -9,7 +9,7 @@ defmodule HomecookedWeb.Router do
   pipeline :authenticated do
     plug HomecookedWeb.Auth.Pipeline
   end
-  
+
   scope "/api", HomecookedWeb do
     pipe_through :api
     get "/check-user-name/:user_name", UserController, :check
@@ -20,7 +20,7 @@ defmodule HomecookedWeb.Router do
     pipe_through :authenticated
     get "/hello", Mycontroller, :hello
   end
-  
+
   scope "/auth", HomecookedWeb do
     pipe_through :api
 
@@ -29,5 +29,4 @@ defmodule HomecookedWeb.Router do
     post "/:provider/callback", AuthController, :callback
     delete "/logout", AuthController, :delete
   end
-  
 end

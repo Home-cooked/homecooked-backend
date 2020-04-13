@@ -41,6 +41,6 @@ defmodule HomecookedWeb.UserController do
 
   def check(conn, %{"user_name" => user_name}, _user) do
     taken = Accounts.check_user_name(user_name)
-    json(conn, %{ taken: taken })
+    json(conn, %{taken: taken})
   end
 end

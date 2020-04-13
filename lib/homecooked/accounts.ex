@@ -7,6 +7,7 @@ defmodule Homecooked.Accounts do
   alias Homecooked.Repo
 
   alias Homecooked.Accounts.User
+  alias Homecooked.Accounts.Words
 
   @doc """
   Returns the list of users.
@@ -50,9 +51,14 @@ defmodule Homecooked.Accounts do
 
   """
   def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
+    user_name = Words.gen_user_name()
+    case check_user_name(user_name) do
+      true -> create_user(attrs)
+      false ->
+        %User{}
+        |> User.changeset(attrs)
+        |> Repo.insert()
+    end
   end
 
   @doc """

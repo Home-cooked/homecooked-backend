@@ -12,13 +12,12 @@ defmodule Homecooked.Accounts.User do
 
     timestamps()
   end
-  
+
   @doc false
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:user_name, :first_name, :last_name, :email])
     |> validate_required([:user_name, :first_name, :last_name])
     |> unique_constraint(:user_name)
-
   end
 end

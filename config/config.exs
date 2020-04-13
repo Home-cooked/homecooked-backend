@@ -27,8 +27,8 @@ config :phoenix, :json_library, Jason
 
 config :ueberauth, Ueberauth,
   providers: [
-    github: { Ueberauth.Strategy.Github, [default_scope: "user:email"] },
-     google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]}
+    github: {Ueberauth.Strategy.Github, [default_scope: "user:email"]},
+    google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]}
   ]
 
 config :ueberauth, Ueberauth.Strategy.Github.OAuth,
@@ -43,7 +43,11 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
 
 config :homecooked, Homecooked.Guardian,
   issuer: "homecooked",
-  secret_key: System.get_env("GUARDIAN_KEY", "iexhB8tix+27rPuqzt9ZUUqTf2cSEpS0dahoc4vLBPFsrqiucA02dftBamuIuGMR")
+  secret_key:
+    System.get_env(
+      "GUARDIAN_KEY",
+      "iexhB8tix+27rPuqzt9ZUUqTf2cSEpS0dahoc4vLBPFsrqiucA02dftBamuIuGMR"
+    )
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

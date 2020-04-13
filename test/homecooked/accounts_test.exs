@@ -6,8 +6,16 @@ defmodule Homecooked.AccountsTest do
   describe "users" do
     alias Homecooked.Accounts.User
 
-    @valid_attrs %{first_name: "some first_name", last_name: "some last_name", user_name: "some user_name"}
-    @update_attrs %{first_name: "some updated first_name", last_name: "some updated last_name", user_name: "some updated user_name"}
+    @valid_attrs %{
+      first_name: "some first_name",
+      last_name: "some last_name",
+      user_name: "some user_name"
+    }
+    @update_attrs %{
+      first_name: "some updated first_name",
+      last_name: "some updated last_name",
+      user_name: "some updated user_name"
+    }
     @invalid_attrs %{first_name: nil, last_name: nil, user_name: nil}
 
     def user_fixture(attrs \\ %{}) do
