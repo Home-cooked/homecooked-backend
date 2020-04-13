@@ -18,9 +18,9 @@ defmodule HomecookedWeb.AuthController do
       |> Map.take([:first_name, :last_name, :email])
       |> Accounts.get_or_create_user()
 
-    {:ok, token} = Homecooked.Guardian.encode_and_sign(user)
+    {:ok, token, _ } = Homecooked.Guardian.encode_and_sign(user)
     conn = Homecooked.Guardian.Plug.sign_in(conn, user)
-    redirect(conn, external: "https://localhost:9000/#/parse_credentials/#{token}")
+    redirect(conn, external: "https://#{System.get_env("WWW_DOMAIN", "localhost:9000")}/#/parse_credentials/#{token}")
   end
 
   def callback(conn, _params) do

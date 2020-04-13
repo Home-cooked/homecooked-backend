@@ -11,9 +11,10 @@ defmodule HomecookedWeb.Router do
   end
 
   scope "/api", HomecookedWeb do
-    pipe_through :api
+    pipe_through [:api, :authenticated]
     get "/check-user-name/:user_name", UserController, :check
-    # resources "/users", UserController
+    get "/users/self", UserController, :self
+    resources "/users", UserController
   end
 
   scope "/protected", HomecookedWeb do

@@ -56,7 +56,7 @@ defmodule Homecooked.Accounts do
       true -> create_user(attrs)
       false ->
         %User{}
-        |> User.changeset(attrs)
+        |> User.changeset(Map.put(attrs, :user_name, user_name))
         |> Repo.insert()
     end
   end

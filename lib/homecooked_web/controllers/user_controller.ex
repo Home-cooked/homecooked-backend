@@ -11,19 +11,24 @@ defmodule HomecookedWeb.UserController do
     apply(__MODULE__, action_name(conn), [conn, conn.params, Guardian.Plug.current_resource(conn)])
   end
 
-  def index(conn, _params) do
+  def index(conn, _params, _user) do
     users = Accounts.list_users()
     render(conn, "index.json", users: users)
   end
 
   # Creating Users handled in auth controller
 
-  def show(conn, %{"id" => id}) do
+  def show(conn, %{"id" => id}, _user) do
     user = Accounts.get_user!(id)
     render(conn, "show.json", user: user)
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
+  def show(conn, %{"id" => id}, _user) do
+    user = Accounts.get_user!(id)
+    render(conn, "show.json", user: user)
+  end
+
+  def update(conn, %{"id" => id, "user" => user_params}, _user) do
     user = Accounts.get_user!(id)
 
     with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
@@ -31,7 +36,7 @@ defmodule HomecookedWeb.UserController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id}, _user) do
     user = Accounts.get_user!(id)
 
     with {:ok, %User{}} <- Accounts.delete_user(user) do
@@ -43,4 +48,9 @@ defmodule HomecookedWeb.UserController do
     taken = Accounts.check_user_name(user_name)
     json(conn, %{taken: taken})
   end
+
+  def self(conn, _params, user) do
+    render(conn, "show.json", user: user)
+  end
+
 end

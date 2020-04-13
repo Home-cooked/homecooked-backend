@@ -15,7 +15,8 @@ defmodule HomecookedWeb.UserView do
       id: user.id,
       user_name: user.user_name,
       first_name: user.first_name,
-      last_name: user.last_name
+      last_name: user.last_name,
+      full_name: "#{user.first_name} #{user.last_name}"
     }
   end
 end
