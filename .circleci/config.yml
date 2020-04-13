@@ -32,19 +32,25 @@ jobs:
           name: Upload release
           command: |
              scp -o "StrictHostKeyChecking no" -r _build/prod/rel/homecooked \
-             admin@$EC2_DOMAIN_NAME:~/homecooked-prod
+             admin@$EC2_DOMAIN_NAME:~/homecooked-prod-temp
 
       - run:
           name: Migrate DB
           command: |
              ssh admin@$EC2_DOMAIN_NAME \
-             "sudo ~/homecooked-prod/bin/homecooked eval "Homecooked.Release.migrate""
+             "sudo ~/homecooked-prod-temp/bin/homecooked eval "Homecooked.Release.migrate""
 
       - run:
           name: Stop running instance
           command: |
              ssh admin@$EC2_DOMAIN_NAME \
              "sudo ~/homecooked-prod/bin/homecooked stop"
+
+      - run:
+          name: Replace directory
+          command: |
+             ssh admin@$EC2_DOMAIN_NAME \
+             "sudo mv -r ~/homecooked-prod-temp ~/homecooked-prod && rm -r -f ~/homecooked-prod-temp"
 
       - run:
           name: Start new instance
