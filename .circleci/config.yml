@@ -50,7 +50,7 @@ jobs:
           name: Replace directory
           command: |
              ssh admin@$EC2_DOMAIN_NAME \
-             "sudo mv -r ~/homecooked-prod-temp ~/homecooked-prod && rm -r -f ~/homecooked-prod-temp"
+             "sudo mv ~/homecooked-prod-temp ~/homecooked-prod && rm -r -f ~/homecooked-prod-temp"
 
       - run:
           name: Start new instance

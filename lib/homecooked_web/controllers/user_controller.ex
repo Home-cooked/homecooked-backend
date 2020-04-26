@@ -23,11 +23,6 @@ defmodule HomecookedWeb.UserController do
     render(conn, "show.json", user: user)
   end
 
-  def show(conn, %{"id" => id}, _user) do
-    user = Accounts.get_user!(id)
-    render(conn, "show.json", user: user)
-  end
-
   def update(conn, %{"id" => id, "user" => user_params}, _user) do
     user = Accounts.get_user!(id)
 

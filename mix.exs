@@ -58,7 +58,12 @@ defmodule Homecooked.MixProject do
       {:guardian, "~> 2.0"},
       {:ueberauth, "~> 0.6"},
       {:ueberauth_github, "~> 0.7"},
-      {:ueberauth_google, "~> 0.8"}
+      {:ueberauth_google, "~> 0.8"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:hackney, "~> 1.9"},
+      {:sweet_xml, "~> 0.6"},
+      {:configparser_ex, "~> 4.0"}
     ]
   end
 
