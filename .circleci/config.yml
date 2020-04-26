@@ -35,16 +35,16 @@ jobs:
              admin@$EC2_DOMAIN_NAME:~/homecooked-prod-temp
 
       - run:
-          name: Migrate DB
-          command: |
-             ssh admin@$EC2_DOMAIN_NAME \
-             "sudo ~/homecooked-prod-temp/bin/homecooked eval "Homecooked.Release.migrate""
-
-      - run:
           name: Stop running instance
           command: |
              ssh admin@$EC2_DOMAIN_NAME \
              "sudo ~/homecooked-prod/bin/homecooked stop"
+
+      - run:
+          name: Migrate DB
+          command: |
+             ssh admin@$EC2_DOMAIN_NAME \
+             "sudo ~/homecooked-prod-temp/bin/homecooked eval "Homecooked.Release.migrate""
 
       - run:
           name: Replace directory
