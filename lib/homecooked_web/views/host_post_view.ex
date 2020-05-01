@@ -12,13 +12,16 @@ defmodule HomecookedWeb.HostPostView do
 
   def render("host_post.json", %{host_post: host_post}) do
     %{
+      id: host_post.id,
       title: host_post.title,
       body: host_post.body,
-      location: host_post.location,
+      address: host_post.address,
+      lat: host_post.lat,
+      lng: host_post.lng,
       event_time: host_post.event_time,
       max_size: host_post.max_size,
       wanted: host_post.wanted,
-      pic: host_post.pic,
+      pic: url,
       user_id: host_post.user_id
     }
   end

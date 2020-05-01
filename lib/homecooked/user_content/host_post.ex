@@ -8,7 +8,10 @@ defmodule Homecooked.UserContent.HostPost do
   schema "host_post" do
     field :title, :string
     field :body,  :string
-    field :location, :map
+    field :address, :string
+    field :lat, :float
+    field :lng, :float
+    field :place_id, :string
     field :event_time, :time
     field :max_size, :integer
     field :wanted, {:array, :string}
@@ -24,7 +27,7 @@ defmodule Homecooked.UserContent.HostPost do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:title, :body, :location, :event_time, :max_size, :wanted, :pic, :user_id])
-    |> validate_required([:title, :body, :location, :event_time, :max_size, :wanted, :pic, :user_id])
+    |> cast(attrs, [:title, :body, :event_time, :max_size, :wanted, :pic, :user_id, :lat, :lng, :address, :place_id])
+    |> validate_required([:title, :body, :event_time, :max_size, :wanted, :pic, :user_id, :lat, :lng, :place_id, :address])
   end
 end

@@ -24,6 +24,7 @@ defmodule HomecookedWeb.Router do
     get "/check-user-name/:user_name", UserController, :check
     get "/users/self", UserController, :self
     resources "/users", UserController
+    get "/host-post/map/:lat/:lng", HostPostController, :map
     resources "/host-post", HostPostController
   end
 

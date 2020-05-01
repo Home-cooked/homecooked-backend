@@ -7,9 +7,28 @@ defmodule Homecooked.UserContent do
   alias Homecooked.UserContent.HostPost
   alias Homecooked.UserContent.SubmitGroup
 
-  def list_host_posts() do
-    Repo.all(from p in HostPost, join: g in SubmitGroup, on: p.id == g.host_post_id)
+  def list_host_posts(user_id) do
+    if user_id do
+      Repo.all(from p in HostPost,
+        left_join: g in SubmitGroup,
+        on: p.id == g.host_post_id,
+        where: p.user_id == ^user_id)
+    else
+      Repo.all(from p in HostPost,
+        left_join: g in SubmitGroup,
+        on: p.id == g.host_post_id)
+    end
   end
+  
+  def search_host_posts(lat, lng, radius) do
+    query =
+      from p in HostPost,
+      where: ^(lat-radius) <= p.lat and p.lat <= ^(lat+radius),
+      where: ^(lng-radius) <= p.lng and p.lng <= ^(lng+radius)
+    Repo.all(query)
+  end
+
+  def get_host_post!(id), do: Repo.get!(HostPost, id)
 
   def create_host_post(attrs) do
     %HostPost{}
