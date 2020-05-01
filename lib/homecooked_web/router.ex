@@ -22,10 +22,19 @@ defmodule HomecookedWeb.Router do
   scope "/api", HomecookedWeb do
     pipe_through [:api, :authenticated]
     get "/check-user-name/:user_name", UserController, :check
+
+    post "/users/self/request-friend", UserController, :request_friend
+    post "/users/self/friend-response", UserController, :respond_to_friend_request
+    delete "/users/self/unfriend", UserController, :unfriend
     get "/users/self", UserController, :self
+
     resources "/users", UserController
+
     get "/host-post/map/:lat/:lng", HostPostController, :map
     resources "/host-post", HostPostController
+
+    resources "/comments/host-post", HostPostCommentController
+
   end
 
   scope "/protected", HomecookedWeb do

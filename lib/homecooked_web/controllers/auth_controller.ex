@@ -13,7 +13,7 @@ defmodule HomecookedWeb.AuthController do
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
     %{info: info} = auth
 
-    {:ok, user} =
+    user =
       info
       |> Map.take([:first_name, :last_name, :email])
       |> Accounts.get_or_create_user()

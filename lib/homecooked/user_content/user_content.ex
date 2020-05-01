@@ -6,6 +6,7 @@ defmodule Homecooked.UserContent do
   alias Homecooked.Accounts.User
   alias Homecooked.UserContent.HostPost
   alias Homecooked.UserContent.SubmitGroup
+  alias Homecooked.UserContent.HostPostComment
 
   def list_host_posts(user_id) do
     if user_id do
@@ -34,6 +35,22 @@ defmodule Homecooked.UserContent do
     %HostPost{}
     |> HostPost.changeset(attrs)
     |> Repo.insert()
+  end
+  
+  def create_comment(attrs) do
+    %HostPostComment{}
+    |> HostPostComment.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_post_comments!(host_post_id) do
+    Repo.all(from c in HostPostComment,
+      where: c.host_post_id == ^host_post_id,
+      preload: [:user])
+    end
+
+  def delete_comment(%HostPostComment{} = comment) do
+    Repo.delete(comment)
   end
   
 end

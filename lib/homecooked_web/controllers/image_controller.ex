@@ -9,17 +9,13 @@ defmodule HomecookedWeb.ImageController do
   def create(conn, %{"photo" => photo}, user) do
     # Why can't i do this in fn signature?
     %{:filename => filename, :path => path} = photo
-    IO.puts path
+    ts_file = "#{DateTime.utc_now() |> DateTime.to_unix()}-#{filename}"
+    namespaced_file = "#{user.id}/#{ts_file}"
     path
     |> S3.Upload.stream_file
-    |> S3.upload("homecooked-images", filename)
+    |> S3.upload("homecooked-images", namespaced_file)
     |> ExAws.request!
-    json(conn, %{sup: "#{user.first_name}"})
-  end
-
-  def show(conn, _, _user) do
-    user = Guardian.Plug.current_resource(conn)
-    json(conn, %{sup: "#{user.id}"})
+    json(conn, %{image_url: "#{ts_file}"})
   end
   
 end

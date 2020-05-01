@@ -11,9 +11,10 @@ defmodule Homecooked.Application do
       # Start the Ecto repository
       Homecooked.Repo,
       # Start the endpoint when the application starts
-      HomecookedWeb.Endpoint
+      HomecookedWeb.Endpoint,
       # Starts a worker by calling: Homecooked.Worker.start_link(arg)
       # {Homecooked.Worker, arg},
+      Homecooked.SignedUrl
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

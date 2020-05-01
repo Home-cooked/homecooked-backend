@@ -1,9 +1,6 @@
 defmodule HomecookedWeb.HostPostController do
   use HomecookedWeb, :controller
-  
-  alias Homecooked.Accounts.User
   alias Homecooked.UserContent
-  alias Homecooked.UserContent.HostPost
 
   action_fallback HomecookedWeb.FallbackController
 
@@ -33,6 +30,11 @@ defmodule HomecookedWeb.HostPostController do
     render(conn, "show.json", host_post: host_post)
   end
 
+  def show(conn, %{"id" => host_post_id}, user) do
+    host_post = UserContent.get_host_post!(host_post_id)
+    render(conn, "show.json", host_post: host_post)
+  end
+
   def map(conn, %{"lat" => lat, "lng" => lng} = params, user) do
     {radius, _} = params |> Map.get('radius', "1") |> Float.parse()
     {lat, _} = lat |> Float.parse()
@@ -41,5 +43,18 @@ defmodule HomecookedWeb.HostPostController do
     render(conn,"index.json", host_posts: posts)
   end
 
+  def create_comment(conn, params, user) do
+    {:ok, comment} = UserContent.create_comment(params |> Map.put("user_id", user.id))
+    render(conn, "show.json", comment: comment)
+  end
+
+  def get_comments(conn, %{ "host_post_id" => host_post_id }, user) do
+    comments = UserContent.get_post_comments!(host_post_id)
+    render(conn, "index", comments: comments)
+  end
+
+  def delete_comment(conn, params, user) do
+    
+  end
 
 end

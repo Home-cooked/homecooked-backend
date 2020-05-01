@@ -7,6 +7,7 @@ defmodule Homecooked.Accounts do
   alias Homecooked.Repo
 
   alias Homecooked.Accounts.User
+  alias Homecooked.Accounts.PendingFriendRequest
   alias Homecooked.Accounts.Words
 
   @doc """
@@ -38,6 +39,73 @@ defmodule Homecooked.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  def get_friends!(id) do
+    user = Repo.get!(User, id)
+    if user.friends do
+      Repo.all(from u in User, where: u.id in ^(user.friends), select: [:id, :pic, :first_name, :last_name, :user_name])
+    else
+      []
+    end
+  end
+
+  def get_incoming_friends!(id) do
+    user = Repo.get!(User, id)
+    res = Repo.all Ecto.assoc(user, :incoming_friend_requests)
+  end
+
+  def get_pending_friends!(id) do
+    user = Repo.get!(User, id)
+    res = Repo.all Ecto.assoc(user, :pending_friend_requests)
+  end
+
+  def request_friend!(from, to) do
+    Repo.get!(User, to)
+    
+    %PendingFriendRequest{}
+    |> PendingFriendRequest.changeset(%{from_id: from.id, to_id: to})
+    |> Repo.insert!()
+  end
+
+  def respond_to_friend(from, to, val) do
+    # Need to wrap in transaction
+    Repo.get_by!(PendingFriendRequest, %{from_id: from, to_id: to.id})
+    |> Repo.delete!()
+
+    if val do
+      from_user = Repo.get!(User, from)
+      to_user = to
+
+      from_user
+      |> User.changeset(%{ friends: if from_user.friends do [to_user.id | from_user.friends] else [to_user.id] end})
+      |> Repo.update!()
+
+      res = to_user
+      |> User.changeset(%{ friends: if to_user.friends do [from_user.id | to_user.friends] else [from_user.id] end})
+      |> Repo.update!()
+    else
+      to
+    end
+  end
+
+  def unfriend!(from, to) do
+    # Need to wrap in transaction
+
+    from_user = from
+    to_user = Repo.get!(User, to)
+
+    to_user
+    |> User.changeset(%{ friends: if to_user.friends
+                         do Enum.filter(to_user.friends, fn x -> x != from.id end) else [] end})
+    |> Repo.update!()
+
+    from_user
+    |> User.changeset(%{ friends: if from_user.friends
+                           do Enum.filter(from_user.friends, fn x -> x != to_user.id end) else [] end})
+    |> Repo.update()
+      
+  end
+
+
   @doc """
   Creates a user.
 
@@ -55,9 +123,10 @@ defmodule Homecooked.Accounts do
     case check_user_name(user_name) do
       true -> create_user(attrs)
       false ->
-        %User{}
+        {:ok, user } = %User{}
         |> User.changeset(Map.put(attrs, :user_name, user_name))
         |> Repo.insert()
+        user
     end
   end
 
@@ -109,9 +178,10 @@ defmodule Homecooked.Accounts do
   end
 
   def get_or_create_user(%{} = user) do
-    case user['id'] do
-      nil -> create_user(user)
-      _ -> Repo.get_by(User, id: user['id'])
+    email = Map.fetch!(user, :email)
+    case Repo.exists?(from u in User, where: u.email == ^email) do
+      true -> Repo.get_by(User, email: email)
+      false -> create_user(user)
     end
   end
 

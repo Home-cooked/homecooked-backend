@@ -1,6 +1,7 @@
 defmodule HomecookedWeb.HostPostView do
   use HomecookedWeb, :view
   alias HomecookedWeb.HostPostView
+  alias Homecooked.SignedUrl
 
   def render("index.json", %{host_posts: host_posts}) do
     %{data: render_many(host_posts, HostPostView, "host_post.json")}
@@ -21,7 +22,7 @@ defmodule HomecookedWeb.HostPostView do
       event_time: host_post.event_time,
       max_size: host_post.max_size,
       wanted: host_post.wanted,
-      pic: url,
+      pic: (if host_post.pic, do: SignedUrl.get("#{host_post.user_id}/#{host_post.pic}")),
       user_id: host_post.user_id
     }
   end
