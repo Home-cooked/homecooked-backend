@@ -43,6 +43,11 @@ defmodule HomecookedWeb.HostPostController do
     render(conn,"index.json", host_posts: posts)
   end
 
+  def submit_group(conn, params, user) do
+    group = UserContent.submit_group!(%{ params | "users" => [user.id | params["users"]] })
+    json(conn, group)
+  end
+  
   def create_comment(conn, params, user) do
     {:ok, comment} = UserContent.create_comment(params |> Map.put("user_id", user.id))
     render(conn, "show.json", comment: comment)

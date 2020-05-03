@@ -35,6 +35,8 @@ defmodule HomecookedWeb.Router do
 
     resources "/comments/host-post", HostPostCommentController
 
+    post "/host-post/:host_post_id/submit-group", HostPostController, :submit_group
+
   end
 
   scope "/protected", HomecookedWeb do

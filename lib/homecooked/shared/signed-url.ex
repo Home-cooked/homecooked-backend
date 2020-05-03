@@ -21,7 +21,6 @@ defmodule Homecooked.SignedUrl do
   
   def get(url) do
     map = Agent.get(__MODULE__, & &1)
-    IO.puts "here"
     case Map.get(map, url) do
       nil -> sign(url)
       [dt, old_url] ->

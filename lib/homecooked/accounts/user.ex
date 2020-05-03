@@ -1,6 +1,7 @@
 defmodule Homecooked.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Homecooked.UserContent.SubmitGroup
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -15,6 +16,8 @@ defmodule Homecooked.Accounts.User do
 
     many_to_many :pending_friend_requests, __MODULE__, join_through: "pending_friend_requests", join_keys: [from_id: :id, to_id: :id]
     many_to_many :incoming_friend_requests, __MODULE__, join_through: "pending_friend_requests", join_keys: [to_id: :id, from_id: :id]
+
+    many_to_many :pending_host_approval, SubmitGroup , join_through: "submit_group_users"
 
     timestamps()
   end

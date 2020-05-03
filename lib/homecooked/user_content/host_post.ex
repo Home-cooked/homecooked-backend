@@ -2,6 +2,7 @@ defmodule Homecooked.UserContent.HostPost do
   use Ecto.Schema
   import Ecto.Changeset
   alias Homecooked.Accounts.User
+  alias Homecooked.UserContent.SubmitGroup
   
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -17,9 +18,10 @@ defmodule Homecooked.UserContent.HostPost do
     field :wanted, {:array, :string}
     field :pic, :string
 
-    # Need to add cascading, need to enforce non-null
     field :user_id, :binary_id
     belongs_to :user, User, define_field: false
+
+    has_many :submit_groups, SubmitGroup
     
     timestamps()
   end

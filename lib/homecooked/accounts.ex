@@ -76,7 +76,7 @@ defmodule Homecooked.Accounts do
       to_user = to
 
       from_user
-      |> User.changeset(%{ friends: if from_user.friends do [to_user.id | from_user.friends] else [to_user.id] end})
+      |> User.changeset(%{ friends: if from_user.friends do [to | from_user.friends] else [to_user.id] end})      
       |> Repo.update!()
 
       res = to_user
