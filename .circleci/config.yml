@@ -46,7 +46,7 @@ jobs:
           name: Stop running instance
           command: |
              ssh admin@$EC2_DOMAIN_NAME \
-             "sudo kill $$(sudo ~/homecooked-prod/bin/homecooked pid)"
+             "sudo kill \$(sudo ~/homecooked-prod/bin/homecooked pid)"
 
       - run:
           name: Migrate DB
