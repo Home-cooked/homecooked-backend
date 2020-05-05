@@ -40,5 +40,7 @@ defmodule HomecookedWeb.Endpoint do
     key: "_homecooked_key",
     signing_salt: "dhUJV2l0"
 
+  plug CORSPlug, origin: ["https://homecookn.co.uk", "https://localhost:9000"]
+  
   plug HomecookedWeb.Router
 end
