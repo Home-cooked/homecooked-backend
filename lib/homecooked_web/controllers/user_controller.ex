@@ -17,16 +17,30 @@ defmodule HomecookedWeb.UserController do
   end
 
   # Creating Users handled in auth controller
-  def show(conn, %{"id" => id, "friends" => friends}, _user) do
-    user = Accounts.get_user!(id)
+  def show(conn, %{"id" => id} = params, _user) do
+    options = %{
+      "pending_friend_requests" => :pending_friend_requests,
+      "incoming_friend_requests" => :incoming_friend_requests,
+      "pending_host_approval" => :pending_host_approval,
+      "attending" => :attending,
+    }
+
+    friends_option = Map.get(params, "friends", false)
+    preload_options = MapSet.intersection(MapSet.new(Map.keys(options)), MapSet.new(Map.keys(params)))
+    |> Enum.map(&(options[&1]))
+    
+    user = Accounts.get_user!(id, preload_options)
     friends = Accounts.get_friends!(id)
-    render(conn, "rich_user.json", user: user, rich_info: %{ friends: friends})
+    render(conn, "rich_user.json", user: user, preload: preload_options, extra: %{friends: friends})
   end
 
-  def show(conn, %{"id" => id}, _user) do
-    user = Accounts.get_user!(id)
-    render(conn, "show.json", user: user)
+  def self(conn, _params, user) do
+    options = [:pending_friend_requests, :incoming_friend_requests,:pending_host_approval,:attending]
+    filled = Accounts.fill_user!(user)
+    friends = Accounts.get_friends!(user.id)
+    render(conn, "rich_user.json", %{user: filled, preload: options ,extra: %{ friends: friends }})
   end
+
 
   def update(conn, %{"id" => id, "user" => user_params}, _user) do
     user = Accounts.get_user!(id)
@@ -49,31 +63,21 @@ defmodule HomecookedWeb.UserController do
     json(conn, %{taken: taken})
   end
 
-  def self(conn, _params, user) do
-    friends = Accounts.get_friends!(user.id)
-    incoming_friends = Accounts.get_incoming_friends!(user.id)
-    IO.inspect incoming_friends
-    pending_friends = Accounts.get_pending_friends!(user.id) |> Enum.map(&(&1.id))
-    render(conn, "rich_user.json", %{user: user, rich_info: %{
-                                        incoming_friends: incoming_friends,
-                                        friends: friends,
-                                        pending_friends: pending_friends
-                                     }})
-  end
-
   def request_friend(conn, %{"id" => to}, user) do
     if !!user.friends and to in user.friends do
       json(conn, nil)
     else
       Accounts.request_friend!(user, to)
-      friends = Accounts.get_pending_friends!(user.id) |> Enum.map(&(&1.id))
-      render(conn, "rich_user.json", user: user, rich_info: %{ pending_friends: friends})
+      fresh_user = Accounts.get_user!(user.id, [:pending_friend_requests])
+      render(conn, "rich_user.json", user: fresh_user, preload: [:pending_friend_requests], extra: %{})
     end
   end
 
   def respond_to_friend_request(conn, %{"id" => from, "val" => val}, user) do
-    new_user = Accounts.respond_to_friend(from, user, val)
-    render(conn, "show.json", user: new_user)
+    Accounts.respond_to_friend(from, user, val)
+    fresh_user = Accounts.get_user!(user.id, [:incoming_friend_requests])
+    friends = Accounts.get_friends!(user.id)
+    render(conn, "rich_user.json", user: fresh_user, preload: [:incoming_friend_requests], extra: %{friends: friends})
   end
 
   def unfriend(conn, %{"id" => to}, user) do

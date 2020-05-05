@@ -38,6 +38,20 @@ defmodule Homecooked.Accounts do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
+  
+  def get_user!(id, options) do
+    Repo.get!(User, id)
+    |> Repo.preload(options)
+  end
+
+  def fill_user!(user) do
+    user
+    |> Repo.preload([
+      :pending_friend_requests,
+      :incoming_friend_requests,
+      :pending_host_approval,
+      :attending])
+  end
 
   def get_friends!(id) do
     user = Repo.get!(User, id)
@@ -51,11 +65,6 @@ defmodule Homecooked.Accounts do
   def get_incoming_friends!(id) do
     user = Repo.get!(User, id)
     res = Repo.all Ecto.assoc(user, :incoming_friend_requests)
-  end
-
-  def get_pending_friends!(id) do
-    user = Repo.get!(User, id)
-    res = Repo.all Ecto.assoc(user, :pending_friend_requests)
   end
 
   def request_friend!(from, to) do
@@ -76,7 +85,7 @@ defmodule Homecooked.Accounts do
       to_user = to
 
       from_user
-      |> User.changeset(%{ friends: if from_user.friends do [to | from_user.friends] else [to_user.id] end})      
+      |> User.changeset(%{ friends: if from_user.friends do [to.id | from_user.friends] else [to_user.id] end})      
       |> Repo.update!()
 
       res = to_user
@@ -85,6 +94,7 @@ defmodule Homecooked.Accounts do
     else
       to
     end
+
   end
 
   def unfriend!(from, to) do

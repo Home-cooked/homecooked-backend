@@ -1,9 +1,7 @@
 defmodule Homecooked.UserContent.SubmitGroupUser do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Homecooked.UserContent.SubmitGroup
-  alias Homecooked.Accounts.User
-
+  
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "submit_group_users" do

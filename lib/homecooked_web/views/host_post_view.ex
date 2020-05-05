@@ -24,8 +24,17 @@ defmodule HomecookedWeb.HostPostView do
       wanted: host_post.wanted,
       pic: (if host_post.pic, do: SignedUrl.get("#{host_post.user_id}/#{host_post.pic}")),
       user_id: host_post.user_id,
-      submit_groups: host_post.submit_groups
-      |> Enum.map(fn g -> %{
+      user: (if Ecto.assoc_loaded?(host_post.user), do:
+        %{
+          id: host_post.user.id,
+          user_name: host_post.user.user_name,
+          first_name: host_post.user.first_name,
+          full_name: "#{host_post.user.first_name} #{host_post.user.last_name}",
+          pic: (if host_post.user.pic, do: SignedUrl.get("#{host_post.user.id}/#{host_post.user.pic}")),
+        }),
+      submit_groups: if Ecto.assoc_loaded?(host_post.submit_groups) do
+        host_post.submit_groups
+        |> Enum.map(fn g -> %{
                          id: g.id,
                          note: g.note,
                          users: g.users
@@ -36,7 +45,19 @@ defmodule HomecookedWeb.HostPostView do
                                             first_name: u.first_name,
                                             user_name: u.user_name
                                         } end)
-                     } end)
+                       } end)
+      else
+        []
+      end,
+      comments: (if Ecto.assoc_loaded?(host_post.comments), do: Enum.map(host_post.comments, &(%{
+      id: &1.id,
+      user_id: &1.user_id,
+      user_name: &1.user.user_name,
+      full_name: "#{&1.user.first_name} #{&1.user.last_name}",
+      pic: (if &1.user.pic, do: SignedUrl.get("#{&1.user_id}/#{&1.user.pic}")),
+      message: &1.message,
+      created_at: &1.inserted_at
+    })))
     }
   end
 end

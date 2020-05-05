@@ -7,6 +7,7 @@ defmodule Homecooked.UserContent do
   alias Homecooked.UserContent.HostPost
   alias Homecooked.UserContent.SubmitGroup
   alias Homecooked.UserContent.SubmitGroupUser
+  alias Homecooked.UserContent.Attending
   alias Homecooked.UserContent.HostPostComment
 
   def list_host_posts(user_id) do
@@ -30,13 +31,13 @@ defmodule Homecooked.UserContent do
       from p in HostPost,
       where: ^(lat-radius) <= p.lat and p.lat <= ^(lat+radius),
       where: ^(lng-radius) <= p.lng and p.lng <= ^(lng+radius),
-      preload: [submit_groups: :users]
+      preload: [{:submit_groups, [:users]}, :user]
     Repo.all(query)
   end
 
-  def get_host_post!(id) do
+  def get_host_post!(id, opts) do
     Repo.get!(HostPost, id)
-    |> Repo.preload([{:submit_groups, [:users]} ])
+    |> Repo.preload(opts)
   end
 
   def create_host_post(attrs) do
@@ -45,10 +46,23 @@ defmodule Homecooked.UserContent do
     |> Repo.insert()
   end
 
+  def respond_to_group!(attrs) do
+    group = Repo.get!(SubmitGroup, attrs["submit_group_id"])
+    |> Repo.preload([:users])
+
+    if attrs["val"] do
+      Enum.map(group.users, fn u ->
+        %Attending{}
+        |> Attending.changeset(%{user_id: u.id, host_post_id: group.host_post_id})
+        |> Repo.insert!()
+      end)      
+    end
+
+    Repo.delete!(group)
+    get_host_post!(attrs["host_post_id"],[:submit_groups])
+  end
+  
   def submit_group!(attrs) do
-    # Repo.get!(HostPost, attrs["host_post_id"])
-    # |> Repo.preload(:submit_groups)
-    # |> Ecto.cast_assoc(:submit_groups)
     {users, attrs} = Map.pop(attrs, "users", [])
     submit_group = %SubmitGroup{}
     |> SubmitGroup.changeset(attrs)
@@ -60,7 +74,9 @@ defmodule Homecooked.UserContent do
       |> SubmitGroupUser.changeset(%{user_id: id, submit_group_id: submit_group.id})
       |> Repo.insert!()
     end)
-    Repo.insert_all(SubmitGroupUser, res)
+
+    Repo.get!(HostPost, attrs["host_post_id"])
+    |> Repo.preload(:submit_groups)
   end
   
   def create_comment(attrs) do

@@ -3,6 +3,7 @@ defmodule Homecooked.UserContent.HostPost do
   import Ecto.Changeset
   alias Homecooked.Accounts.User
   alias Homecooked.UserContent.SubmitGroup
+  alias Homecooked.UserContent.HostPostComment
   
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -22,6 +23,10 @@ defmodule Homecooked.UserContent.HostPost do
     belongs_to :user, User, define_field: false
 
     has_many :submit_groups, SubmitGroup
+
+    has_many :comments, HostPostComment 
+
+    many_to_many :attending, User , join_through: "host_post_attending"
     
     timestamps()
   end

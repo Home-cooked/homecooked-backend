@@ -30,8 +30,16 @@ defmodule HomecookedWeb.HostPostController do
     render(conn, "show.json", host_post: host_post)
   end
 
-  def show(conn, %{"id" => host_post_id}, user) do
-    host_post = UserContent.get_host_post!(host_post_id)
+  def show(conn, %{"id" => host_post_id} = params, user) do
+    options = %{
+      "comments" => {:comments, [:user]},
+      "user" => :user,
+      "submit_groups" => {:submit_groups, [:users]},
+      "attending" => :attending,
+    }
+    preload_options = MapSet.intersection(MapSet.new(Map.keys(options)), MapSet.new(Map.keys(params)))
+    |> Enum.map(&(options[&1]))
+    host_post = UserContent.get_host_post!(host_post_id, preload_options)
     render(conn, "show.json", host_post: host_post)
   end
 
@@ -44,8 +52,13 @@ defmodule HomecookedWeb.HostPostController do
   end
 
   def submit_group(conn, params, user) do
-    group = UserContent.submit_group!(%{ params | "users" => [user.id | params["users"]] })
-    json(conn, group)
+    post = UserContent.submit_group!(%{ params | "users" => [user.id | params["users"]] })
+    render(conn, "show.json", host_post: post)
+  end
+
+  def respond_to_group(conn, params, user) do
+    host_post = UserContent.respond_to_group!(params)
+    render(conn, "show.json", host_post: host_post)
   end
   
   def create_comment(conn, params, user) do
