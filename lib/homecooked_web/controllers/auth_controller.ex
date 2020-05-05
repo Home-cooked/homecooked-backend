@@ -20,7 +20,7 @@ defmodule HomecookedWeb.AuthController do
 
     {:ok, token, _ } = Homecooked.Guardian.encode_and_sign(user)
     conn = Homecooked.Guardian.Plug.sign_in(conn, user)
-    redirect(conn, external: "https://#{System.get_env("WWW_DOMAIN", "localhost:9000")}/#/parse_credentials/#{token}")
+    redirect(conn, external: "https://homecookn.co.uk/#/parse_credentials/#{token}")
   end
 
   def callback(conn, _params) do
