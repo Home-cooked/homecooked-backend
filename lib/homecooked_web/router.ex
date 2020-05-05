@@ -40,8 +40,8 @@ defmodule HomecookedWeb.Router do
 
   end
 
-  scope "/protected", HomecookedWeb do
-    pipe_through [:api, :authenticated]
+  scope "/ping", HomecookedWeb do
+    pipe_through [:api]
     get "/hello", Mycontroller, :hello
   end
 

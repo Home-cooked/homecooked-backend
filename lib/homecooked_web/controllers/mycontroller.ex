@@ -2,7 +2,6 @@ defmodule HomecookedWeb.Mycontroller do
   use HomecookedWeb, :controller
 
   def hello(conn, _) do
-    user = Guardian.Plug.current_resource(conn)
-    json(conn, %{sup: "#{user.id}"})
+    json(conn, %{sup: "my old friend"})
   end
 end
