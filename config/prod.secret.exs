@@ -24,7 +24,14 @@ secret_key_base =
     """
 
 config :homecooked, HomecookedWeb.Endpoint,
-  http: [:inet6, port: String.to_integer(System.get_env("PORT") || "80")],
+  http: [:inet6, port: 80],
+  https: [
+    port: 443,
+    otp_app: :homecooked,
+    # cipher_suite: :strong,
+    keyfile: System.get_env("SSL_KEY_PATH"),
+    certfile: System.get_env("SSL_CERT_PATH"),
+  ],
   secret_key_base: secret_key_base
 
 # ## Using releases (Elixir v1.9+)
