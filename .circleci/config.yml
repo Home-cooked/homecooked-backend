@@ -28,17 +28,25 @@ jobs:
       - run: mix local.rebar --force
       - run: mix deps.get
       - run: MIX_ENV=prod mix release
+      - run: tar -zcvf homecooked-prod-temp.tar -C _build/prod/rel/homecooked .
+
       - run:
           name: Upload release
           command: |
-             scp -o "StrictHostKeyChecking no" -r _build/prod/rel/homecooked \
-             admin@$EC2_DOMAIN_NAME:~/homecooked-prod-temp
+            scp -o "StrictHostKeyChecking no" homecooked-prod-temp.tar \
+            admin@$EC2_DOMAIN_NAME:~/
+
+      - run:
+          name: Untar release
+          command: |
+            ssh admin@$EC2_DOMAIN_NAME \
+            "mkdir homecooked-prod-temp && tar xf homecooked-prod-temp.tar -C homecooked-prod-temp"
 
       - run:
           name: Stop running instance
           command: |
              ssh admin@$EC2_DOMAIN_NAME \
-             "sudo ~/homecooked-prod/bin/homecooked stop || true"
+             "sudo kill $$(sudo ~/homecooked-prod/bin/homecooked pid)"
 
       - run:
           name: Migrate DB
@@ -50,7 +58,7 @@ jobs:
           name: Replace directory
           command: |
              ssh admin@$EC2_DOMAIN_NAME \
-             "sudo cp -r -f ~/homecooked-prod-temp ~/homecooked-prod && rm -r -f ~/homecooked-prod-temp"
+             "sudo rm -rf ~/homecooked-prod && mv ~/homecooked-prod-temp ~/homecooked-prod && rm homecooked-prod-temp.tar"
 
       - run:
           name: Start new instance
