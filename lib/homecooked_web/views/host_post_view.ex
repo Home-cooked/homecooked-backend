@@ -11,6 +11,18 @@ defmodule HomecookedWeb.HostPostView do
     %{data: render_one(host_post, HostPostView, "host_post.json")}
   end
 
+  defp user_map(user) do
+    user
+    |> Enum.map(fn u -> %{
+                          id: u.id,
+                          pic: (if u.pic, do: SignedUrl.get("#{u.id}/#{u.pic}")),
+                          full_name: "#{u.first_name} #{u.last_name}",
+                          user_name: u.user_name,
+                          first_name: u.first_name,
+                      } end)
+  end
+
+  
   def render("host_post.json", %{host_post: host_post}) do
     %{
       id: host_post.id,
@@ -37,14 +49,7 @@ defmodule HomecookedWeb.HostPostView do
         |> Enum.map(fn g -> %{
                          id: g.id,
                          note: g.note,
-                         users: g.users
-                         |> Enum.map(fn u -> %{
-                                            id: u.id,
-                                            pic: (if u.pic, do: SignedUrl.get("#{u.id}/#{u.pic}")),
-                                            full_name: "#{u.first_name} #{u.last_name}",
-                                            first_name: u.first_name,
-                                            user_name: u.user_name
-                                        } end)
+                         users: user_map(g.users)
                        } end)
       else
         []
@@ -57,7 +62,8 @@ defmodule HomecookedWeb.HostPostView do
       pic: (if &1.user.pic, do: SignedUrl.get("#{&1.user_id}/#{&1.user.pic}")),
       message: &1.message,
       created_at: &1.inserted_at
-    })))
+                                                                                               }))),
+      attending: if Ecto.assoc_loaded?(host_post.attending) do user_map(host_post.attending) else [] end
     }
   end
 end

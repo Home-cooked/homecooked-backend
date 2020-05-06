@@ -16,13 +16,13 @@ defmodule Homecooked.UserContent do
         left_join: g in SubmitGroup,
         on: p.id == g.host_post_id,
         where: p.user_id == ^user_id,
-        preload: [submit_groups: :users]
+        preload: [{:submit_groups, [:users]}, :user, :attending]
       )
     else
       Repo.all(from p in HostPost,
         left_join: g in SubmitGroup,
         on: p.id == g.host_post_id,
-        preload: [submit_groups: :users])
+        preload: [{:submit_groups, [:users]}, :user, :attending])
     end
   end
   
@@ -31,7 +31,7 @@ defmodule Homecooked.UserContent do
       from p in HostPost,
       where: ^(lat-radius) <= p.lat and p.lat <= ^(lat+radius),
       where: ^(lng-radius) <= p.lng and p.lng <= ^(lng+radius),
-      preload: [{:submit_groups, [:users]}, :user]
+      preload: [{:submit_groups, [:users]}, :user, :attending]
     Repo.all(query)
   end
 
@@ -59,7 +59,7 @@ defmodule Homecooked.UserContent do
     end
 
     Repo.delete!(group)
-    get_host_post!(attrs["host_post_id"],[:submit_groups])
+    get_host_post!(attrs["host_post_id"],[{:submit_groups, [:users]}, :attending])
   end
   
   def submit_group!(attrs) do
@@ -76,7 +76,7 @@ defmodule Homecooked.UserContent do
     end)
 
     Repo.get!(HostPost, attrs["host_post_id"])
-    |> Repo.preload(:submit_groups)
+    |> Repo.preload([{:submit_groups, [:users]}, :attending])
   end
   
   def create_comment(attrs) do
