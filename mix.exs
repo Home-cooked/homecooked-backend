@@ -53,7 +53,7 @@ defmodule Homecooked.MixProject do
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
+      {:jason, "~> 1.1"},
       {:plug_cowboy, "~> 2.0"},
       {:guardian, "~> 2.0"},
       {:ueberauth, "~> 0.6"},
@@ -65,6 +65,7 @@ defmodule Homecooked.MixProject do
       {:sweet_xml, "~> 0.6"},
       {:configparser_ex, "~> 4.0"},
       {:cors_plug, "~> 2.0"},
+      {:sentry, "~> 7.0"},
     ]
   end
 

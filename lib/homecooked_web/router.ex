@@ -2,6 +2,9 @@ defmodule HomecookedWeb.Router do
   use HomecookedWeb, :router
   require Ueberauth
 
+  use Plug.ErrorHandler
+  use Sentry.Plug
+  
   pipeline :api do
     plug :accepts, ["json"]
   end

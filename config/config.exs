@@ -22,6 +22,17 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+# Does this overwrite above or append?
+config :logger,
+  backends: [:console, Sentry.LoggerBackend]
+
+config :sentry,
+  dsn: System.get_env("SENTRY"),
+  environment_name: Mix.env(),
+  included_environments: [:prod],
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!()
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 

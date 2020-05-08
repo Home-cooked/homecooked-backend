@@ -1,4 +1,5 @@
 defmodule HomecookedWeb.Endpoint do
+  use Sentry.Phoenix.Endpoint
   use Phoenix.Endpoint, otp_app: :homecooked
 
   socket "/socket", HomecookedWeb.UserSocket,
