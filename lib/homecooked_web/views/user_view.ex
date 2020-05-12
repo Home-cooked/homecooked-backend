@@ -55,7 +55,7 @@ defmodule HomecookedWeb.UserView do
                               id: &1.id,
                               user_id: &1.user_id,
                               title: &1.title,
-                              event_time: &1.event_time,
+                              event_time: &1.event_time |> DateTime.to_unix(),
                               address: &1.address,
                               pic: (if &1.pic, do: SignedUrl.get("#{&1.user_id}/#{&1.pic}")),
                                                                          })))

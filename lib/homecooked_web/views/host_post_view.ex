@@ -31,7 +31,7 @@ defmodule HomecookedWeb.HostPostView do
       address: host_post.address,
       lat: host_post.lat,
       lng: host_post.lng,
-      event_time: host_post.event_time,
+      event_time: host_post.event_time |> DateTime.to_unix(),
       max_size: host_post.max_size,
       wanted: host_post.wanted,
       pic: (if host_post.pic, do: SignedUrl.get("#{host_post.user_id}/#{host_post.pic}")),

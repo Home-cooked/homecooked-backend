@@ -21,7 +21,6 @@ defmodule HomecookedWeb.HostPostController do
   
   def create(conn, params, user) do
     {:ok, new_ts } = DateTime.from_unix(params["event_time"], :millisecond)
-    IO.inspect new_ts
     {:ok, host_post} =
       params
       |> Map.put("user_id", user.id)

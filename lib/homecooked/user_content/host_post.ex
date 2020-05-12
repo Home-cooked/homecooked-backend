@@ -14,7 +14,7 @@ defmodule Homecooked.UserContent.HostPost do
     field :lat, :float
     field :lng, :float
     field :place_id, :string
-    field :event_time, :time
+    field :event_time, :utc_datetime
     field :max_size, :integer
     field :wanted, {:array, :string}
     field :pic, :string
